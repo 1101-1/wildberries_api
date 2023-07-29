@@ -1,4 +1,4 @@
-module wildberries_api
+module github.com/1101-1/wildberries_api
 
 go 1.20
 

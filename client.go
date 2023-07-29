@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"wildberries_api/json_data"
-	"wildberries_api/usecase"
+	"github.com/1101-1/wildberries_api/json_data"
+	"github.com/1101-1/wildberries_api/usecase"
 
 	"github.com/go-resty/resty/v2"
 )

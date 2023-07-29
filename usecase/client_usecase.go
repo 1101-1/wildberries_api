@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"wildberries_api/json_data"
+	"github.com/1101-1/wildberries_api/json_data"
 
 	"github.com/go-resty/resty/v2"
 )
