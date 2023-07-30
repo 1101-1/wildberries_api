@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	"github.com/1101-1/wildberries_api/json_data"
 	"github.com/1101-1/wildberries_api/usecase"
@@ -13,9 +14,9 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-func NewClient() (usecase.APIusecase, error) {
+func NewClient() (usecase.UserApi, error) {
 	client := resty.New()
-
+	client.SetTimeout(5 * time.Second)
 	client.SetHeaders(map[string]string{
 		"User-Agent":     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
 		"Accept":         "*/*",
@@ -26,30 +27,32 @@ func NewClient() (usecase.APIusecase, error) {
 		"Sec-Fetch-Mode": "cors",
 		"Sec-Fetch-Site": "same-site",
 		"TE":             "trailers",
-		"Host":           "user-geo-data.wildberries.ru",
 	})
 
-	geo_data, err := get_geo(client)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get geo data: %w", err)
+	for retries := 0; retries < 3; retries++ {
+		geo_data, err := get_geo(client)
+		if err == nil {
+			return &usecase.UserClient{
+				Client:  client,
+				GeoData: geo_data,
+			}, nil
+		}
+
+		time.Sleep(1 * time.Second)
 	}
 
-	return &usecase.Client{
-		Client:  client,
-		GeoData: geo_data,
-	}, nil
+	return nil, fmt.Errorf("failed to get geo data: max retries exceeded")
 }
 
 func get_geo(client *resty.Client) (json_data.GeoData, error) {
 	url := "https://user-geo-data.wildberries.ru/get-geo-info?currency=RUB&locale=ru"
 
-	resp, err := client.R().Get(url)
+	resp, err := client.SetHeader("Host", "user-geo-data.wildberries.ru").R().Get(url)
 	if err != nil {
 		return json_data.GeoData{}, err
 	}
 
 	var geoData json_data.GeoData
-
 	if resp.Header().Get("Content-Encoding") == "gzip" {
 		body := resp.Body()
 		gzReader, err := gzip.NewReader(bytes.NewReader(body))
