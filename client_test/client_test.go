@@ -1,4 +1,4 @@
-package wildberries_api
+package client_test
 
 import (
 	"bytes"
@@ -24,6 +24,24 @@ type GeoDataTest struct {
 	Currency     string  `json:"currency"`
 	IP           string  `json:"ip"`
 	Dt           int     `json:"dt"`
+}
+
+func CreateClient() *resty.Client {
+	client := resty.New()
+
+	client.SetHeaders(map[string]string{
+		"User-Agent":     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+		"Accept":         "*/*",
+		"Referer":        "https://www.wildberries.ru/catalog/",
+		"Origin":         "https://www.wildberries.ru",
+		"Connection":     "keep-alive",
+		"Sec-Fetch-Dest": "empty",
+		"Sec-Fetch-Mode": "cors",
+		"Sec-Fetch-Site": "same-site",
+		"TE":             "trailers",
+	})
+
+	return client
 }
 
 func TestGeoResp(t *testing.T) {
@@ -56,19 +74,8 @@ func TestGeoResp(t *testing.T) {
 func GetGeoData() (GeoDataTest, error) {
 	url := "https://user-geo-data.wildberries.ru/get-geo-info?currency=RUB&latitude=55.753737&longitude=37.6201&locale=ru&address=%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0&dt=0"
 
-	client := resty.New()
+	client := CreateClient()
 
-	client.SetHeaders(map[string]string{
-		"User-Agent":     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
-		"Accept":         "*/*",
-		"Referer":        "https://www.wildberries.ru/catalog/",
-		"Origin":         "https://www.wildberries.ru",
-		"Connection":     "keep-alive",
-		"Sec-Fetch-Dest": "empty",
-		"Sec-Fetch-Mode": "cors",
-		"Sec-Fetch-Site": "same-site",
-		"TE":             "trailers",
-	})
 	client.SetHeader("Host", "user-geo-data.wildberries.ru")
 
 	resp, err := client.R().Get(url)

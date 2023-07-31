@@ -40,7 +40,7 @@ func (c *UserClient) SearchItems(keyword string) (json_data.SearchData, error) {
 
 	fullURL := fmt.Sprintf("%s?%s&%s", baseURL, c.GeoData.XInfo, queryParams.Encode())
 
-	resp, err := c.Client.R().SetHeader("Host", "search.wb.ru").Get(fullURL)
+	resp, err := c.Client.SetHeader("Host", "search.wb.ru").R().Get(fullURL)
 
 	if err != nil {
 		return json_data.SearchData{}, err
