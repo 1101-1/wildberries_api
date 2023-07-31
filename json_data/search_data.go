@@ -77,3 +77,10 @@ type SearchData struct {
 	Params   Params   `json:"params"`
 	Data     Data     `json:"data"`
 }
+
+type SearchDataTest struct {
+	Metadata Metadata `json:"metadata"`
+	State    int      `json:"state"`
+	Version  int      `json:"version"`
+	Params   Params   `json:"params"`
+}

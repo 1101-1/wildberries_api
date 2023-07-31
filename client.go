@@ -14,9 +14,9 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-func NewClient() (usecase.UserApi, error) {
+func CreateClient() *resty.Client {
 	client := resty.New()
-	client.SetTimeout(5 * time.Second)
+
 	client.SetHeaders(map[string]string{
 		"User-Agent":     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
 		"Accept":         "*/*",
@@ -28,6 +28,12 @@ func NewClient() (usecase.UserApi, error) {
 		"Sec-Fetch-Site": "same-site",
 		"TE":             "trailers",
 	})
+
+	return client
+}
+
+func NewClient() (usecase.UserApi, error) {
+	client := CreateClient()
 
 	for retries := 0; retries < 3; retries++ {
 		geo_data, err := get_geo(client)

@@ -1,4 +1,4 @@
-package client_test
+package wildberries_api
 
 import (
 	"bytes"
@@ -8,8 +8,6 @@ import (
 	"io/ioutil"
 	"reflect"
 	"testing"
-
-	"github.com/go-resty/resty/v2"
 )
 
 type GeoDataTest struct {
@@ -24,24 +22,6 @@ type GeoDataTest struct {
 	Currency     string  `json:"currency"`
 	IP           string  `json:"ip"`
 	Dt           int     `json:"dt"`
-}
-
-func CreateClient() *resty.Client {
-	client := resty.New()
-
-	client.SetHeaders(map[string]string{
-		"User-Agent":     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
-		"Accept":         "*/*",
-		"Referer":        "https://www.wildberries.ru/catalog/",
-		"Origin":         "https://www.wildberries.ru",
-		"Connection":     "keep-alive",
-		"Sec-Fetch-Dest": "empty",
-		"Sec-Fetch-Mode": "cors",
-		"Sec-Fetch-Site": "same-site",
-		"TE":             "trailers",
-	})
-
-	return client
 }
 
 func TestGeoResp(t *testing.T) {
